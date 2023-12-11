@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.2.0</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.example</groupId>
+	<artifactId>grpc2</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>grpc2</name>
+	<description>Demo project for Spring Boot</description>
+	<properties>
+		<java.version>17</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- grpc : 기본 core 모듈들 -->
+		<dependency>
+		    <groupId>io.grpc</groupId>
+		    <artifactId>grpc-protobuf</artifactId>
+		    <version>1.53.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>io.grpc</groupId>
+		    <artifactId>grpc-stub</artifactId>
+		    <version>1.53.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.google.protobuf</groupId>
+		    <artifactId>protobuf-java</artifactId>
+		    <version>3.22.0</version>
+		</dependency>
+		<!-- 서버 구현을 위한 netty -->
+		<dependency>
+		    <groupId>io.grpc</groupId>
+		    <artifactId>grpc-netty-shaded</artifactId>
+		    <version>1.52.1</version>
+		</dependency>
+		<!-- proto 파일 빌드에서 컴파일 후 에노테이션 표기를 위해  -->
+		<dependency> 
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>annotations-api</artifactId>
+		    <version>6.0.53</version>
+		    <scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<!--grpc : 컴파일 옵션(해당 옵션은 프로젝트를 빌드하거나 실행할 때 쓰이는 옵션)-->
+			<plugin>
+		      <groupId>org.xolstice.maven.plugins</groupId>
+		      <artifactId>protobuf-maven-plugin</artifactId>
+		      <version>0.6.1</version>
+		      <configuration>
+		        <protocArtifact>com.google.protobuf:protoc:3.22.0:exe:${os.detected.classifier}</protocArtifact>
+		        <pluginId>grpc-java</pluginId>
+		        <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.31.0:exe:${os.detected.classifier}</pluginArtifact>
+		      </configuration>
+		      <executions>
+		        <execution>
+		          <goals>
+		            <goal>compile</goal>
+		            <goal>compile-custom</goal>
+		          </goals>
+		        </execution>
+		      </executions>
+		    </plugin>
+		    <!--grpc : 컴파일 옵션(proto 파일의 내용을 맞추어 클래스 파일을 생성하기 위한 옵션)-->
+		    <plugin>
+			    <groupId>com.github.os72</groupId>
+			    <artifactId>protoc-jar-maven-plugin</artifactId>
+			    <version>3.11.4</version>
+			    <executions>
+			        <execution>
+			            <phase>generate-sources</phase>
+			            <goals>
+			                <goal>run</goal>
+			            </goals>
+			            <configuration>
+			                <includeMavenTypes>direct</includeMavenTypes>
+			                <inputDirectories>
+			                    <include>src/main/resources/proto</include>
+			                </inputDirectories>
+			                <outputTargets>
+			                    <outputTarget>
+			                        <type>java</type>
+			                        <outputDirectory>src/main/java</outputDirectory>
+			                    </outputTarget>
+			                    <outputTarget>
+			                        <type>grpc-java</type>
+			                        <pluginArtifact>io.grpc:protoc-gen-grpc-java:1.15.0</pluginArtifact>
+			                        <outputDirectory>src/main/java</outputDirectory>
+			                    </outputTarget>
+			                </outputTargets>
+			            </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
