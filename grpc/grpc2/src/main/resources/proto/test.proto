@@ -7,16 +7,20 @@ option java_outer_classname = "HelloPrt";
 
 package protocc;
 
+/* RPC를 통해 서버가 클라이언트에게 제공할 함수의 형태를 정의 */
 // 1개의 클래스와 2개의 메소드 생성
 service MyProtoService {
     rpc giveMeData1(RequestMessage) returns (ResponseMessageStyle1); //송신 및 수신용 메소드1
     rpc giveMeData2(RequestMessage) returns (ResponseMessageStyle2); //송신 및 수신용 메소드2
 }
 
+/* 주고 받는 데이터들은 message로 정의 */
 message RequestMessage { //요청하는 객체
     string id = 1;
     string name = 2;
     float price = 3;
+    //repeated : 배열 형태로 사용(packed=true : 필드는 key-value 구조로 저장되어 반복할 때도 key가 계속 붙어 있게 되는데 해당 옵션을 주면 value만 반복됨)
+    //repeated int32 result_per_page = 3 [packed=true];
 }
 
 message ResponseMessageStyle1 {  //결과받는 객체1
